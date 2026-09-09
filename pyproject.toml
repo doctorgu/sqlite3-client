@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sqlite3-client"
+version = "1.0.0"
+description = "Sqlite3 helper function to run SQLite query with #if support"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Gu Park", email = "doctorgu@kakao.com"}
+]
+keywords = ["sqlite3 client", "sqlite3 helper"]
+dependencies = [
+    "pyhumps",
+    "typing-extensions",
+    "python-dotenv",
+    "pydantic-settings",
+    "Flask",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "pytest-cov",
+    "pytest-env",
+    "pytest-mock",
+    "pytest-asyncio",
+    "build"
+]
+
+[project.urls]
+homepage = "https://github.com/doctorgu/sqlite3-client"
+repository = "https://github.com/doctorgu/sqlite3-client"
+documentation = "https://github.com/doctorgu/sqlite3-client"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["sqlite3_client*"] # to include query_by_key sub dir
+namespaces = true
