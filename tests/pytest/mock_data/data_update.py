@@ -23,11 +23,7 @@ out_list.append(
             "user_name": "홍길동",
             "user_rank": 1,
         },
-        params_ignore=[
-            "user_id",
-            "user_name",
-            "user_rank"
-        ],
+        params_ignore=["user_id", "user_name", "user_rank"],
         params_out={"user_name": "", "user_rank": 0},
         row_count=1,
     )

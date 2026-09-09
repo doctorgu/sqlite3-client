@@ -141,9 +141,7 @@ def get_query_with_value(qry_str: str, params: dict) -> str:
         query_replaced = re.sub(rf":{re.escape(key)}\b", replace, query_replaced)
 
     # {{}} -> {} : python
-    query_replaced = (
-        query_replaced.replace("{{", "{").replace("}}", "}")
-    )
+    query_replaced = query_replaced.replace("{{", "{").replace("}}", "}")
 
     return query_replaced
 

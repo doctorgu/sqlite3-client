@@ -72,16 +72,16 @@ db_settings = Settings(
     use_conditional=True,
     all_query=qry_dic,
     before_read_execute=lambda qry_key, params, qry_str, qry_with_value: print(
-        f'READ_ROWS_START, QRY_KEY: "{qry_key}"' f", QRY_WITH_VALUE: {qry_with_value}"
+        f'READ_ROWS_START, QRY_KEY: "{qry_key}", QRY_WITH_VALUE: {qry_with_value}'
     ),
     after_read_execute=lambda qry_key, duration: print(
-        f'READ_ROWS_END, QRY_KEY: "{qry_key}"' f", DURATION: {duration}"
+        f'READ_ROWS_END, QRY_KEY: "{qry_key}", DURATION: {duration}'
     ),
-    before_update_execute=lambda qry_key, params, params_out, qry_str, qry_with_value: print(
-        f'UPDATES_START, QRY_KEY: "{qry_key}"' f", QRY_WITH_VALUE: {qry_with_value}"
+    before_update_execute=lambda qry_key, params, params_out, qry_str, qry_with_value: (
+        print(f'UPDATES_START, QRY_KEY: "{qry_key}", QRY_WITH_VALUE: {qry_with_value}')
     ),
     after_update_execute=lambda qry_key, row_count, params_out, duration: print(
-        f'UPDATES_END, QRY_KEY: "{qry_key}"' f", DURATION: {duration}"
+        f'UPDATES_END, QRY_KEY: "{qry_key}", DURATION: {duration}'
     ),
 )
 ```
@@ -110,8 +110,7 @@ Returns affected row count:
 
 ```python
 affected = db.update(
-    "upsert_user",
-    {"user_id": "gildong.hong", "user_name": "홍길동", "user_rank": 1}
+    "upsert_user", {"user_id": "gildong.hong", "user_name": "홍길동", "user_rank": 1}
 )
 print("Affected rows:", affected)  # 1
 ```
@@ -123,7 +122,7 @@ params_out = {"user_name": "", "user_rank": 0}
 db.update(
     "upsert_user",
     {"user_id": "gildong.hong", "user_name": "홍길동", "user_rank": 1},
-    params_out=params_out
+    params_out=params_out,
 )
 print("Returned name:", params_out["user_name"], params_out["user_rank"])  # 홍길동 1
 ```
@@ -181,6 +180,7 @@ def read_csv_partial():
             "Transfer-Encoding": "chunked",
         },
     )
+
 
 # Fast API
 @router.get("/read-csv-partial-async")
@@ -267,8 +267,7 @@ WHERE   1 = 1
 
 ```python
 rows = db.read_rows(
-    "read_user_search",
-    {"user_id": "gildong.hong", "user_name": "", "user_rank": 0}
+    "read_user_search", {"user_id": "gildong.hong", "user_name": "", "user_rank": 0}
 )
 print([r["user_name"] for r in rows])
 # ['홍길동']
@@ -278,8 +277,7 @@ print([r["user_name"] for r in rows])
 
 ```python
 rows = db.read_rows(
-    "read_user_search",
-    {"user_id": "", "user_name": "%김%", "user_rank": 0}
+    "read_user_search", {"user_id": "", "user_name": "%김%", "user_rank": 0}
 )
 print([r["user_name"] for r in rows])
 # ['김순자', '김말자']
@@ -289,8 +287,7 @@ print([r["user_name"] for r in rows])
 
 ```python
 rows = db.read_rows(
-    "read_user_search",
-    {"user_id": "", "user_name": "", "user_rank": 3}
+    "read_user_search", {"user_id": "", "user_name": "", "user_rank": 3}
 )
 print([r["user_name"] for r in rows])
 # ['홍길동', '김순자', '김말자']
@@ -310,6 +307,7 @@ Can be replaced `print` with `logger`:
 ```python
 import logging
 
+
 def get_sql_logger(name="sql"):
     logger = logging.getLogger(name)
     if not logger.handlers:
@@ -317,13 +315,16 @@ def get_sql_logger(name="sql"):
             filename="sql.log",
             level=logging.DEBUG,
             format="%(asctime)s [%(levelname)7s] %(message)s",
-            encoding="utf-8"
+            encoding="utf-8",
         )
     return logger
 
+
 logger = get_sql_logger()
-db_settings.before_read_execute = lambda qry_key, params, qry_str, qry_with_value: logger.debug(
-    f'READ_ROWS_START, QRY_KEY: "{qry_key}"' f", QRY_WITH_VALUE: {qry_with_value}"
+db_settings.before_read_execute = lambda qry_key, params, qry_str, qry_with_value: (
+    logger.debug(
+        f'READ_ROWS_START, QRY_KEY: "{qry_key}", QRY_WITH_VALUE: {qry_with_value}'
+    )
 )
 ```
 

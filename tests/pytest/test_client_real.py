@@ -1,7 +1,9 @@
 """test client with real sqlite database"""
 
 import os
+
 import pytest
+
 from sqlite3_client.client import Client
 from tests.db_settings import db_settings
 
@@ -48,8 +50,14 @@ def test_real_sqlite_crud():
 
     # 4. upsert_user_list
     batch = [
-        ("upsert_user", {"user_id": "sunja.kim", "user_name": "김순자", "user_rank": 2}),
-        ("upsert_user", {"user_id": "malja.kim", "user_name": "김말자", "user_rank": 3}),
+        (
+            "upsert_user",
+            {"user_id": "sunja.kim", "user_name": "김순자", "user_rank": 2},
+        ),
+        (
+            "upsert_user",
+            {"user_id": "malja.kim", "user_name": "김말자", "user_rank": 3},
+        ),
     ]
     row_counts = db_client.updates(batch)
     assert row_counts == [1, 1]
@@ -106,7 +114,9 @@ def test_real_sqlite_crud():
     except RuntimeError:
         pass
 
-    check_row = db_client.read_row("read_user_search", {"user_id": "temp.user", "user_name": "", "user_rank": 0})
+    check_row = db_client.read_row(
+        "read_user_search", {"user_id": "temp.user", "user_name": "", "user_rank": 0}
+    )
     assert check_row is None
 
     # 10. read_csv_partial

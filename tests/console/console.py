@@ -2,9 +2,9 @@
 
 import json
 
+from sqlite3_client.client import Client
 from tests.db_client import DbClient
 from tests.db_settings import db_settings
-from sqlite3_client.client import Client
 
 
 def create_tables():

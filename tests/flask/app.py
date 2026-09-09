@@ -1,10 +1,12 @@
 """flask app"""
 
 from datetime import datetime
-from flask import Flask, jsonify, render_template, Response
+
+from flask import Flask, Response, jsonify, render_template
+
 from sqlite3_client.client import Client, RealDictRow
-from tests.db_settings import db_settings
 from tests.db_client import DbClient
+from tests.db_settings import db_settings
 
 app = Flask(__name__)
 
@@ -67,7 +69,7 @@ def upsert_user_params_out():
     # user_name, user_rank after update: 홍길동
     return get_json(
         fn_name=upsert_user_params_out.__name__,
-        message=f'user_name after update: {params_out["user_name"]}, {params_out["user_rank"]}',
+        message=f"user_name after update: {params_out['user_name']}, {params_out['user_rank']}",
     )
 
 

@@ -2,19 +2,20 @@
 
 import atexit
 import csv
-from datetime import datetime
 import io
 import queue
 import sqlite3
 import threading
 import time
-from typing import AsyncGenerator, Generator
+from collections.abc import AsyncGenerator, Generator
+from datetime import datetime
+
+from .query_by_key.query import Query
 
 # pylint: disable=relative-beyond-top-level
 from .query_by_key.query_util import (
     get_query_with_value,
 )
-from .query_by_key.query import Query
 from .query_by_key.settings import Settings as QrySettings
 from .settings import Settings
 
@@ -308,7 +309,7 @@ class Client:
         *,
         row_count_partial: int = 100,
         en: bool = False,
-    ) -> AsyncGenerator[bytes, None]:
+    ) -> AsyncGenerator[bytes]:
         """Return rows partially in batches with async
 
         Arguments:
@@ -327,7 +328,7 @@ class Client:
             row_count_partial: int = 100,
             en: bool = False,
             cursor: sqlite3.Cursor,
-        ) -> AsyncGenerator[bytes, None]:
+        ) -> AsyncGenerator[bytes]:
             if not isinstance(params, dict):
                 params = vars(params)
 
@@ -370,7 +371,9 @@ class Client:
                 if not is_second and cursor.description:
                     column_names = [desc[0] for desc in cursor.description]
                     csv_w.writerow(column_names)
-                csv_w.writerows([list(r.values()) if isinstance(r, dict) else r for r in rows])
+                csv_w.writerows(
+                    [list(r.values()) if isinstance(r, dict) else r for r in rows]
+                )
 
                 yield csv_out.getvalue().encode("utf-8")
 
@@ -410,7 +413,7 @@ class Client:
         *,
         row_count_partial: int = 100,
         en: bool = False,
-    ) -> Generator[bytes, None, None]:
+    ) -> Generator[bytes]:
         """Return rows partially in batches
 
         Arguments:
@@ -429,7 +432,7 @@ class Client:
             row_count_partial: int = 100,
             en: bool = False,
             cursor: sqlite3.Cursor,
-        ) -> Generator[bytes, None, None]:
+        ) -> Generator[bytes]:
             if not isinstance(params, dict):
                 params = vars(params)
 
@@ -471,7 +474,9 @@ class Client:
                 if not is_second and cursor.description:
                     column_names = [desc[0] for desc in cursor.description]
                     csv_w.writerow(column_names)
-                csv_w.writerows([list(r.values()) if isinstance(r, dict) else r for r in rows])
+                csv_w.writerows(
+                    [list(r.values()) if isinstance(r, dict) else r for r in rows]
+                )
 
                 yield csv_out.getvalue().encode("utf-8")
 

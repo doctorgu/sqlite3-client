@@ -1,7 +1,7 @@
 """settings"""
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Callable
 
 
 @dataclass(frozen=True, kw_only=True)

@@ -1,11 +1,11 @@
 """client_util"""
 
 import json
-from datetime import datetime, date
+from datetime import date, datetime
 from typing import Literal
 
 # pylint: disable=relative-beyond-top-level
-from .query_util import replace_en_ko_column_alias, get_conditional
+from .query_util import get_conditional, replace_en_ko_column_alias
 from .settings import Settings
 
 

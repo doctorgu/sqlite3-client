@@ -1,7 +1,7 @@
 """test Flask"""
 
-from tests.pytest.test_fn_common import patch_sqlite3
 from tests.flask.app import app
+from tests.pytest.test_fn_common import patch_sqlite3
 
 
 def test_flask(mocker):

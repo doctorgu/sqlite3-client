@@ -4,10 +4,10 @@ import json
 import re
 from typing import Literal
 
-from sqlite3_client.client import Client, ClientPool
+from sqlite3_client.client import ClientPool
 from tests.pytest.mock_data.data_all import (
-    get_rows_by_params,
     get_out_by_params,
+    get_rows_by_params,
 )
 
 
@@ -62,9 +62,7 @@ def patch_sqlite3(mocker):
                     else:
                         self.description = None
                 elif func_type == "update":
-                    params_out, row_count = get_out_by_params(
-                        self.qry_key, self.params
-                    )
+                    params_out, row_count = get_out_by_params(self.qry_key, self.params)
                     self.row = params_out
                     self.rowcount = row_count
                     if params_out:
