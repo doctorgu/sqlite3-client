@@ -537,8 +537,8 @@ class Client:
                 )
 
                 qry_key, params, params_out = item_new
-                if not isinstance(params, dict):
-                    params: dict = vars(params)
+                if not isinstance(params, (dict, list, tuple)):
+                    params = vars(params)
 
                 if params_out is None:
                     params_out = {}
@@ -574,7 +574,10 @@ class Client:
                     )
                     start = time.time()
 
-                cursor.execute(qry_str, params)
+                if isinstance(params, (list, tuple)):
+                    cursor.executemany(qry_str, params)
+                else:
+                    cursor.execute(qry_str, params)
 
                 if cursor.description:
                     rows = cursor.fetchall()

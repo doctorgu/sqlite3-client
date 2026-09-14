@@ -135,6 +135,11 @@ def get_query_with_value(qry_str: str, params: dict) -> str:
             ret = str(value)
         return ret
 
+    if isinstance(params, (list, tuple)):
+        if not params:
+            return qry_str
+        params = params[0] if isinstance(params[0], dict) else {}
+
     query_replaced = qry_str
     for key, value in params.items():
         replace = escape_literal(value)

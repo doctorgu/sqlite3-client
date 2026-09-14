@@ -35,9 +35,22 @@ class Query:
         if not query:
             raise KeyError(f"{qry_key} not exists")
 
+        cond_params = (
+            params[0]
+            if isinstance(params, (list, tuple))
+            and params
+            and isinstance(params[0], dict)
+            else (params if isinstance(params, dict) else {})
+        )
+        info_params = (
+            f"[executemany: {len(params)} rows]"
+            if isinstance(params, (list, tuple)) and len(params) > 1
+            else params
+        )
+
         info = {
             "qry_key": qry_key,
-            "params": params,
+            "params": info_params,
             "func_type": func_type,
             "en": en,
         }
@@ -45,7 +58,7 @@ class Query:
         if self.qry_settings.use_en_ko_column_alias and isinstance(en, bool):
             query = replace_en_ko_column_alias(query, en)
         if self.qry_settings.use_conditional and "#if" in query:
-            query = get_conditional(query, params)
+            query = get_conditional(query, cond_params)
 
         return (
             f"/* {json.dumps(info, ensure_ascii=False, default=serial_date)} */{query}"
