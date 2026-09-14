@@ -1,13 +1,29 @@
 """query collection"""
 
-# pylint: disable=relative-beyond-top-level
-from .query_read import qry_dic as query_read
-from .query_update import qry_dic as query_update
+from pathlib import Path
 
-qry_all = [query_update, query_read]
+import yaml
 
-all_query = {}
-for qry_cur in qry_all:
+dir_current = Path(__file__).parent
+all_query: dict[str, str] = {}
+
+for yml_path in sorted(
+    p for p in dir_current.iterdir() if p.suffix in (".yml", ".yaml")
+):
+    with open(yml_path, encoding="utf-8") as f:
+        items = yaml.safe_load(f) or []
+
+    qry_cur: dict[str, str] = {}
+    if isinstance(items, list):
+        for item in items:
+            if isinstance(item, dict) and "name" in item and "value" in item:
+                val = item["value"].strip()
+                qry_cur[item["name"]] = f"\n{val}\n"
+    elif isinstance(items, dict):
+        for k, v in items.items():
+            val = str(v).strip()
+            qry_cur[k] = f"\n{val}\n"
+
     dup = all_query.keys() & qry_cur.keys()
     if dup:
         raise ValueError(

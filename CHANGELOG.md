@@ -17,3 +17,7 @@ Support executemany() for insert / update when params is list of dict
 ## [1.0.2]
 
 RealDictRow to sqlite3.Row
+
+## [1.1.0]
+
+- Query changed to yml file format from python dict format.
