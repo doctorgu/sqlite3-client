@@ -19,26 +19,7 @@ from .query_by_key.query_util import (
 from .query_by_key.settings import Settings as QrySettings
 from .settings import Settings
 
-
-class RealDictRow(dict):
-    """RealDictRow mimicking psycopg2.extras.RealDictRow"""
-
-    pass
-
-
-class RealDictCursor(sqlite3.Cursor):
-    """RealDictCursor mimicking psycopg2.extras.RealDictCursor"""
-
-    pass
-
-
 connection = sqlite3.Connection
-
-
-def dict_factory(cursor: sqlite3.Cursor, row: tuple) -> RealDictRow:
-    """Row factory that returns rows as RealDictRow (dict subclass)"""
-    fields = [col[0] for col in cursor.description]
-    return RealDictRow(zip(fields, row))
 
 
 class ClientPool:
@@ -76,7 +57,7 @@ class ClientPool:
             check_same_thread=False,
             uri=uri,
         )
-        conn.row_factory = dict_factory
+        conn.row_factory = sqlite3.Row
         if not self.db_settings_pool.database.startswith(":memory:"):
             try:
                 conn.execute("PRAGMA journal_mode=WAL;")
@@ -201,7 +182,7 @@ class Client:
         *,
         en: bool = False,
         fetchone: bool = False,
-    ) -> list[RealDictRow]:
+    ) -> list[sqlite3.Row]:
         """Returns all rows
 
         Arguments:
@@ -209,7 +190,7 @@ class Client:
             params: Key, Value pairs to pass as parameters to the SQL query.
 
         Returns:
-            a List of Dictionaries;
+            a List of sqlite3.Row;
         """
 
         def read_rows_by_param(
@@ -235,7 +216,7 @@ class Client:
                 )
                 start = time.time()
 
-            rows: list[RealDictRow] = []
+            rows: list[sqlite3.Row] = []
             cursor.execute(qry_str, params)
 
             if not fetchone:
@@ -254,7 +235,7 @@ class Client:
 
             return rows
 
-        rows: list[RealDictRow] = []
+        rows: list[sqlite3.Row] = []
         if self.in_with_block:
             cursor = self.conn.cursor()
             rows = read_rows_by_param(
@@ -288,7 +269,7 @@ class Client:
         params: dict,
         *,
         en: bool = False,
-    ) -> RealDictRow | None:
+    ) -> sqlite3.Row | None:
         """call read_rows"""
 
         rows = self.read_rows(
@@ -583,7 +564,7 @@ class Client:
                     rows = cursor.fetchall()
                     if params_out and rows:
                         row = rows[0]
-                        for k, v in row.items():
+                        for k, v in dict(row).items():
                             if k in params_out:
                                 params_out[k] = v
 

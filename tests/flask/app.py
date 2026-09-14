@@ -1,10 +1,11 @@
 """flask app"""
 
+import sqlite3
 from datetime import datetime
 
 from flask import Flask, Response, jsonify, render_template
 
-from sqlite3_client.client import Client, RealDictRow
+from sqlite3_client.client import Client
 from tests.db_client import DbClient
 from tests.db_settings import db_settings
 
@@ -14,9 +15,24 @@ app = Flask(__name__)
 def get_json(
     *,
     fn_name: str,
-    message: str | int | RealDictRow | None | list[str] | list[int] | list[RealDictRow],
+    message: (
+        str
+        | int
+        | sqlite3.Row
+        | dict
+        | None
+        | list[str]
+        | list[int]
+        | list[sqlite3.Row]
+        | list[dict]
+    ),
 ):
     """return json"""
+    if isinstance(message, sqlite3.Row):
+        message = dict(message)
+    elif isinstance(message, list) and message and isinstance(message[0], sqlite3.Row):
+        message = [dict(r) for r in message]
+
     return jsonify({"fn_name": fn_name, "message": message})
 
 

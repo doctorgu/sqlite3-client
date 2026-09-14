@@ -13,3 +13,7 @@ Initial release:
 ## [1.0.1]
 
 Support executemany() for insert / update when params is list of dict
+
+## [1.0.2]
+
+RealDictRow to sqlite3.Row

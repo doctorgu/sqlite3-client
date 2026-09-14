@@ -65,7 +65,7 @@ def test_real_sqlite_crud():
     # 5. read_user_one_row
     row = db_client.read_row("read_user_id_all", {})
     assert row is not None
-    assert "user_id" in row
+    assert "user_id" in row.keys()
 
     # 6. read_user_all_rows
     rows = db_client.read_rows("read_user_id_all", {})
