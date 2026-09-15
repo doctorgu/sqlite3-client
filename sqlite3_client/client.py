@@ -11,8 +11,6 @@ from collections.abc import AsyncGenerator, Generator
 from datetime import datetime
 
 from .query_by_key.query import Query
-
-# pylint: disable=relative-beyond-top-level
 from .query_by_key.query_util import (
     get_query_with_value,
 )
@@ -133,7 +131,6 @@ class Client:
     _conn_pool: ClientPool
 
     def __init__(self, db_settings: Settings):
-        # pylint:disable=global-statement,global-variable-not-assigned
         global db_set_and_pool
 
         self.conn: connection
@@ -493,11 +490,12 @@ class Client:
         qry_key_params_list: list[tuple[str, dict, dict]] | list[tuple[str, dict]],
     ) -> list[int]:
         """Executes a list of SQL statements within a single transaction.
-        If all SQL commands succeed, returns a list of the number of rows affected by each qry_key.
+        If all SQL commands succeed, returns a list of the number of rows affected
+        by each qry_key.
         If any command fails, an error is raised.
 
         Arguments:
-            qry_key_params_list: A list of tuples, each containing the following two values:
+            qry_key_params_list: A list of tuples, each containing following two values:
                 qry_key: key of the dictionary registered in the clients/queries folder
                 params: key, value pairs to pass as parameters to the SQL query.
 
@@ -602,8 +600,7 @@ class Client:
         self,
         qry_key: str,
         params: dict,
-        # pylint: disable=dangerous-default-value
-        params_out: dict = {},
+        params_out: dict | None = None,
     ) -> int:
         """call updates"""
 
@@ -615,7 +612,6 @@ class Client:
 def close_all_connection():
     """call when python exits"""
 
-    # pylint:disable=global-statement
     global db_set_and_pool
 
     for v in db_set_and_pool.values():

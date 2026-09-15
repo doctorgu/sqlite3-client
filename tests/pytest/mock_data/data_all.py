@@ -175,7 +175,8 @@ def get_rows_by_params(qry_key: str, params: dict, en: bool = False) -> list[dic
         description = (
             f"Not found by {qry_key}"
             f" and {json.dumps(params, default=str, ensure_ascii=False)} and en:{en}"
-            f"\nCandidate: {json.dumps(params_data_candidate, default=str, ensure_ascii=False)}"
+            f"\nCandidate: "
+            f"{json.dumps(params_data_candidate, default=str, ensure_ascii=False)}"
         )
     raise ValueError(description)
 
@@ -209,7 +210,9 @@ def get_out_by_params(qry_key: str, params: dict) -> tuple[dict, int]:
         )
     else:
         description = (
-            f"Not found by {qry_key} and {json.dumps(params, default=str, ensure_ascii=False)}"
-            f"\nCandidate: {json.dumps(params_data_candidate, default=str, ensure_ascii=False)}"
+            f"Not found by {qry_key}"
+            f" and {json.dumps(params, default=str, ensure_ascii=False)}"
+            f"\nCandidate:"
+            f" {json.dumps(params_data_candidate, default=str, ensure_ascii=False)}"
         )
     raise ValueError(description)

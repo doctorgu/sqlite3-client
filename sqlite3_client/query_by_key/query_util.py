@@ -36,7 +36,7 @@ def get_conditional(qry_str: str, params: dict) -> str:
         # assert eval_safe(':target != ""', {"target": ""}) is False
         # assert eval_safe('"A" in :targets', {"targets": ["A", "B"]}) is True
         # assert eval_safe('"A" not in :targets', {"targets": ["A", "B"]}) is False
-        # assert eval_safe(":t in [i for i in range(10)]", {"t": 1}) is True  # '[i' not in
+        # assert eval_safe(":t in [i for i in range(10)]", {"t": 1}) is True
         """
 
         # remove ':' from :target
@@ -48,7 +48,7 @@ def get_conditional(qry_str: str, params: dict) -> str:
         # - digit
         to_check = re.sub(r"""(".*?"|'.*?'|\b\d+\b)""", "", to_eval)
 
-        param_set = set([key for key in params])
+        param_set = {key for key in params}
         op_set = {
             "==",
             "!=",
@@ -75,7 +75,6 @@ def get_conditional(qry_str: str, params: dict) -> str:
             if word not in allowed_set:
                 raise ValueError(f"'{word}' not in {allowed_set}")
 
-        # pylint:disable=eval-used
         return eval(to_eval, params)
 
     rets = []
@@ -85,10 +84,9 @@ def get_conditional(qry_str: str, params: dict) -> str:
     is_checked = False
     for line in lines:
         line_strip = line.strip()
-        if line_strip.startswith("#if") or line_strip.startswith("#elif"):
+        if line_strip.startswith(("#if", "#elif")):
             if not is_checked:
                 _, condition = line_strip.split(maxsplit=1)
-                # pylint:disable=eval-used
                 is_include = eval_safe(condition, params.copy())
                 if is_include:
                     is_checked = True
@@ -163,7 +161,5 @@ def replace_en_ko_column_alias(qry_str: str, en: bool) -> str:
     pattern = r'(?P<ws>\s)"(?P<en>[^"]+)\|(?P<ko>[^"]+)"'
     en_ko = "en" if en else "ko"
     repl = rf'\g<ws>"\g<{en_ko}>"'
-    qry_str_new = re.sub(
-        pattern, repl, qry_str, count=0, flags=re.MULTILINE | re.IGNORECASE
-    )
+    qry_str_new = re.sub(pattern, repl, qry_str, flags=re.MULTILINE | re.IGNORECASE)
     return qry_str_new

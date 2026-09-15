@@ -85,7 +85,10 @@ def upsert_user_params_out():
     # user_name, user_rank after update: 홍길동
     return get_json(
         fn_name=upsert_user_params_out.__name__,
-        message=f"user_name after update: {params_out['user_name']}, {params_out['user_rank']}",
+        message=(
+            f"user_name after update:"
+            f" {params_out['user_name']}, {params_out['user_rank']}"
+        ),
     )
 
 
