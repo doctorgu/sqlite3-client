@@ -186,7 +186,56 @@ def read_using_conditional3():
         "read_user_search", {"user_id": "", "user_name": "", "user_rank": 3}
     )
     # ['홍길동', '김순자', '김말자']
-    print(read_using_conditional2.__name__, [row["user_name"] for row in rows])
+    print(read_using_conditional3.__name__, [row["user_name"] for row in rows])
+
+
+def read_using_include1():
+    """read using include 1 (#include)"""
+
+    db_client = Client(db_settings=db_settings)
+
+    # SELECT  user_id
+    # FROM    t_user
+    # WHERE   1 = 1
+    #         AND user_id = :user_id
+    rows = db_client.read_rows(
+        "read_user_by_key",
+        {"user_id": "gildong.hong", "user_name": "", "user_rank": 0},
+    )
+    # ['gildong.hong']
+    print(read_using_include1.__name__, [row["user_id"] for row in rows])
+
+
+def read_using_include2():
+    """read using include 2 (#include)"""
+
+    db_client = Client(db_settings=db_settings)
+
+    # SELECT  user_id
+    # FROM    t_user
+    # WHERE   1 = 1
+    #         AND user_name LIKE :user_name
+    rows = db_client.read_rows(
+        "read_user_by_key", {"user_id": "", "user_name": "%김%", "user_rank": 0}
+    )
+    # ['sunja.kim', 'malja.kim']
+    print(read_using_include2.__name__, [row["user_id"] for row in rows])
+
+
+def read_using_include3():
+    """read using include 3 (#include)"""
+
+    db_client = Client(db_settings=db_settings)
+
+    # SELECT  user_id
+    # FROM    t_user
+    # WHERE   1 = 1
+    #         AND user_rank <= :user_rank
+    rows = db_client.read_rows(
+        "read_user_by_key", {"user_id": "", "user_name": "", "user_rank": 3}
+    )
+    # ['gildong.hong', 'sunja.kim', 'malja.kim']
+    print(read_using_include3.__name__, [row["user_id"] for row in rows])
 
 
 def use_db_client():
@@ -240,6 +289,9 @@ if __name__ == "__main__":
     read_using_conditional1()
     read_using_conditional2()
     read_using_conditional3()
+    read_using_include1()
+    read_using_include2()
+    read_using_include3()
     read_using_en_ko1()
     read_using_en_ko2()
     use_db_client()

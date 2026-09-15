@@ -90,6 +90,29 @@ def test_real_sqlite_crud():
     )
     assert sorted([r["user_name"] for r in rows_c3]) == ["김말자", "김순자", "홍길동"]
 
+    # 7-1. read_using_include (#include)
+    rows_i1 = db_client.read_rows(
+        "read_user_by_key",
+        {"user_id": "gildong.hong", "user_name": "", "user_rank": 0},
+    )
+    assert [r["user_id"] for r in rows_i1] == ["gildong.hong"]
+
+    rows_i2 = db_client.read_rows(
+        "read_user_by_key",
+        {"user_id": "", "user_name": "%김%", "user_rank": 0},
+    )
+    assert sorted([r["user_id"] for r in rows_i2]) == ["malja.kim", "sunja.kim"]
+
+    rows_i3 = db_client.read_rows(
+        "read_user_by_key",
+        {"user_id": "", "user_name": "", "user_rank": 3},
+    )
+    assert sorted([r["user_id"] for r in rows_i3]) == [
+        "gildong.hong",
+        "malja.kim",
+        "sunja.kim",
+    ]
+
     # 8. bilingual alias
     rows_en = db_client.read_rows(
         "read_user_alias", {"user_id": "gildong.hong"}, en=True

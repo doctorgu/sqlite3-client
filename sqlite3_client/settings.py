@@ -29,7 +29,7 @@ class Settings:
         FROM tbl_vietnam
     #endif
     """
-    all_query: dict[str, str] = field(default_factory=dict)
+    all_query: dict[str, str | dict[str, str]] = field(default_factory=dict)
     """all query information"""
 
     before_read_execute: Callable[[str, dict, str, str], None] | None = None

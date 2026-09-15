@@ -293,6 +293,36 @@ print([r["user_name"] for r in rows])
 # ['홍길동', '김순자', '김말자']
 ```
 
+## Include Query Snippet (`#include`)
+
+Include reusable query fragments or sub-queries. Line-based only (no inline `#include`), and can be used inside `#if` blocks.
+
+- `#include name`: When the target query's `value` is a string (no sub-keys).
+- `#include name(key)`: When the target query's `value` is a dictionary (parent of sub-keys).
+
+```yaml
+- name: _filter_by_key
+  value:
+    user_id: "            AND user_id = :user_id"
+    user_name: "            AND user_name LIKE :user_name"
+    user_rank: "            AND user_rank <= :user_rank"
+
+- name: read_user_by_key
+  value: |
+    SELECT  user_id
+    FROM    t_user
+    WHERE   1 = 1
+    #if user_id
+    #include _filter_by_key(user_id)
+    #elif user_name
+    #include _filter_by_key(user_name)
+    #elif user_rank
+    #include _filter_by_key(user_rank)
+    #endif
+```
+
+If a parameter is passed and no matching sub-key exists, an error is raised.
+
 ## Logging support
 
 - `before_read_execute` called before execute query for read
@@ -361,6 +391,7 @@ Any attempt to inject raw SQL will raise a parsing error **before** execution.
 | Partially return CSV          | `read_csv_partial` / `read_csv_partial_async`                                   |
 | Bilingual column aliases      | `"Name\|이름"` syntax                                                           |
 | Conditional SQL               | `#if` / `#elif` / `#endif`                                                      |
+| Include Query Snippet         | `#include` / `#include(key)`                                                    |
 | Logging support               | Before and after execute to DB via `before...` and `after...` callable function |
 | SQL injection protection      | Strict parsing in conditionals                                                  |
 
