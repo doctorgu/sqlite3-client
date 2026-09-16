@@ -2,6 +2,7 @@
 
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from pathlib import Path
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -31,6 +32,8 @@ class Settings:
     """
     all_query: dict[str, str | dict[str, str]] = field(default_factory=dict)
     """all query information"""
+    dir_queries: Path | str | None = None
+    """queries directory path"""
 
     before_read_execute: Callable[[str, dict, str, str], None] | None = None
     """
