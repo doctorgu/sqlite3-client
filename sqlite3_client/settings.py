@@ -24,7 +24,7 @@ class Settings:
     """SELECT file_name "File Name|파일명" """
     use_conditional: bool = False
     """
-    #if target == 'korea'
+    #if ${target} == 'korea'
         FROM tbl_korea
     #else
         FROM tbl_vietnam
