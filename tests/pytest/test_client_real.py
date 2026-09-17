@@ -163,3 +163,32 @@ async def test_real_sqlite_csv_async():
             break
     assert chunks[0] == b"\xef\xbb\xbf"
     assert b"rnum,each_day" in chunks[1]
+
+
+def test_real_sqlite_multi_statement_semicolon():
+    """test that update with multiple statements separated by semicolon works"""
+    db_client = Client(db_settings=db_settings)
+
+    # 1. Multiple DDL statements separated by semicolon
+    db_client.qry.qry_settings.all_query["create_multi_tables"] = (
+        'CREATE TABLE "t_multi_a" (id int, val text);\n'
+        'CREATE UNIQUE INDEX "t_multi_a_idx" ON "t_multi_a" (id);'
+    )
+    db_client.update("create_multi_tables", {})
+
+    # 2. Multiple DML statements with semicolon in string literal
+    db_client.qry.qry_settings.all_query["insert_multi"] = (
+        "INSERT INTO \"t_multi_a\" VALUES (1, 'hello;world');\n"
+        "INSERT INTO \"t_multi_a\" VALUES (2, 'second;value');"
+    )
+    row_count = db_client.update("insert_multi", {})
+    assert row_count == 1
+
+    # Verify rows were inserted
+    db_client.qry.qry_settings.all_query["read_multi_a"] = (
+        'SELECT id, val FROM "t_multi_a" ORDER BY id'
+    )
+    rows = db_client.read_rows("read_multi_a", {})
+    assert len(rows) == 2
+    assert rows[0]["val"] == "hello;world"
+    assert rows[1]["val"] == "second;value"

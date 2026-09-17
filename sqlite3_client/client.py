@@ -16,6 +16,7 @@ import yaml
 from .query_by_key.query import Query
 from .query_by_key.query_util import (
     get_query_with_value,
+    split_query_by_semicolon,
 )
 from .query_by_key.settings import Settings as QrySettings
 from .settings import Settings
@@ -625,6 +626,9 @@ class Client:
 
                 if isinstance(params, (list, tuple)):
                     cursor.executemany(qry_str, params)
+                elif ";" in qry_str:
+                    for stmt in split_query_by_semicolon(qry_str):
+                        cursor.execute(stmt, params)
                 else:
                     cursor.execute(qry_str, params)
 

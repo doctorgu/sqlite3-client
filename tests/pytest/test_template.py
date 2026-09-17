@@ -54,9 +54,7 @@ def test_template_none_value_raises_value_error():
 def test_template_with_query_class():
     """test template integration through Query class"""
     all_query = {
-        "read_dynamic": (
-            "SELECT id FROM ${table_name} WHERE user_id = :user_id"
-        )
+        "read_dynamic": ("SELECT id FROM ${table_name} WHERE user_id = :user_id")
     }
     query = Query(
         qry_settings=Settings(
@@ -77,10 +75,7 @@ def test_template_combined_with_if():
     """test template combined with #if conditional"""
     all_query = {
         "read_dyn_if": (
-            "SELECT id FROM ${table}\n"
-            "#if ${active}\n"
-            "WHERE is_active = 1\n"
-            "#endif"
+            "SELECT id FROM ${table}\n#if ${active}\nWHERE is_active = 1\n#endif"
         )
     }
     query = Query(
@@ -111,14 +106,23 @@ def test_if_raw_variable_raises_error():
     """test that raw variables without ${} in #if raise ValueError"""
     all_query = {
         "read_raw_if": (
-            "SELECT id FROM t_user\n"
-            "#if active\n"
-            "WHERE is_active = 1\n"
-            "#endif"
+            "SELECT id FROM t_user\n#if active\nWHERE is_active = 1\n#endif"
         ),
         "read_raw_comp": (
+            "SELECT id FROM t_user\n#if target == 'korea'\nWHERE country = 'KR'\n#endif"
+        ),
+        "read_raw_rev": (
+            "SELECT id FROM t_user\n#if 'korea' == target\nWHERE country = 'KR'\n#endif"
+        ),
+        "read_raw_val": (
             "SELECT id FROM t_user\n"
-            "#if target == 'korea'\n"
+            "#if ${target} == korea\n"
+            "WHERE country = 'KR'\n"
+            "#endif"
+        ),
+        "read_fn_call": (
+            "SELECT id FROM t_user\n"
+            "#if len(${targets}) > 0\n"
             "WHERE country = 'KR'\n"
             "#endif"
         ),
@@ -135,6 +139,15 @@ def test_if_raw_variable_raises_error():
 
     with pytest.raises(ValueError, match="Raw variable"):
         query.get_query_by_key("read_raw_comp", {"target": "korea"}, "read")
+
+    with pytest.raises(ValueError, match="Raw variable"):
+        query.get_query_by_key("read_raw_rev", {"target": "korea"}, "read")
+
+    with pytest.raises(ValueError, match="Raw variable"):
+        query.get_query_by_key("read_raw_val", {"target": "korea"}, "read")
+
+    with pytest.raises(ValueError, match="Raw variable"):
+        query.get_query_by_key("read_fn_call", {"targets": ["A"]}, "read")
 
 
 def test_if_template_variable():
