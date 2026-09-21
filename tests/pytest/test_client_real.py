@@ -192,3 +192,33 @@ def test_real_sqlite_multi_statement_semicolon():
     assert len(rows) == 2
     assert rows[0]["val"] == "hello;world"
     assert rows[1]["val"] == "second;value"
+
+
+def test_real_sqlite_update_executemany():
+    """test that update with list[dict] executes executemany properly"""
+    db_client = Client(db_settings=db_settings)
+
+    db_client.qry.qry_settings.all_query["create_exec_table"] = (
+        'CREATE TABLE "t_exec_test" (id int, name text);'
+    )
+    db_client.update("create_exec_table", {})
+
+    db_client.qry.qry_settings.all_query["insert_exec_test"] = (
+        'INSERT INTO "t_exec_test" VALUES (:id, :name);'
+    )
+    row_count = db_client.update(
+        "insert_exec_test",
+        [
+            {"id": 1, "name": "alice"},
+            {"id": 2, "name": "bob"},
+            {"id": 3, "name": "charlie"},
+        ],
+    )
+    assert row_count == 3
+
+    db_client.qry.qry_settings.all_query["read_exec_test"] = (
+        'SELECT id, name FROM "t_exec_test" ORDER BY id;'
+    )
+    rows = db_client.read_rows("read_exec_test", {})
+    assert len(rows) == 3
+    assert [r["name"] for r in rows] == ["alice", "bob", "charlie"]

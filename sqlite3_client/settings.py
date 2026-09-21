@@ -45,13 +45,13 @@ class Settings:
     """
     before_update_execute: (
         Callable[
-            [str, dict, dict, str, str],
+            [str, dict | list[dict], dict, str, str],
             None,
         ]
         | None
     ) = None
     """
-    qry_key: str, params: dict, params_out: dict, qry_str: str, qry_with_value: str
+    qry_key: str, params: dict | list[dict], params_out: dict, qry_str: str, qry_with_value: str
     """
     after_update_execute: Callable[[str, int, dict, int], None] | None = None
     """
