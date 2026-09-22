@@ -22,14 +22,6 @@ class Settings:
 
     use_en_ko_column_alias: bool = False
     """SELECT file_name "File Name|파일명" """
-    use_conditional: bool = False
-    """
-    #if ${target} == 'korea'
-        FROM tbl_korea
-    #else
-        FROM tbl_vietnam
-    #endif
-    """
     all_query: dict[str, str | dict[str, str]] = field(default_factory=dict)
     """all query information"""
     dir_queries: Path | str | None = None
@@ -51,7 +43,8 @@ class Settings:
         | None
     ) = None
     """
-    qry_key: str, params: dict | list[dict], params_out: dict, qry_str: str, qry_with_value: str
+    qry_key: str, params: dict | list[dict], params_out: dict,
+    qry_str: str, qry_with_value: str
     """
     after_update_execute: Callable[[str, int, dict, int], None] | None = None
     """
